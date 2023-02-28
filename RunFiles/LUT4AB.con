@@ -1,0 +1,83 @@
+#####################################################################
+# 
+# Config
+# 
+#####################################################################
+current_design LUT4AB
+#####################################################################
+#
+# Design Rule Constrains
+#
+#####################################################################
+set_max_fanout 				32 [current_design]
+set_max_transition 			1 [current_design]
+set_max_delay				5
+set_min_delay				1
+set_max_capacitance			5
+
+
+# Design Environments
+set auto_wire_load_selection 		true
+set_wire_load_mode enclosed
+set_max_area 				0
+#####################################################################
+# 
+# Set Optimizations Constraint
+# 
+#####################################################################
+# clock 
+
+create_clock -name $clock_name -period $clock_period -wave {0 20} [get_ports $clock_name] 
+set_dont_touch_network 			[get_ports $clock_name] 
+set_clock_uncertainty -setup 		0.3 [get_ports $clock_name] 
+set_clock_uncertainty -hold 		0.15 [get_ports $clock_name] 
+set_clock_latency 			1 [get_ports $clock_name]
+set_drive 				0 [get_ports $clock_name]
+
+# timing constrain
+set_disable_timing 			my_mux2 -from A0 -to X
+set_disable_timing 			my_mux2 -from A1 -to X
+
+set_disable_timing 			cus_mux41_buf -from A0 -to X
+set_disable_timing 			cus_mux41_buf -from A1 -to X
+set_disable_timing 			cus_mux41_buf -from A2 -to X
+set_disable_timing 			cus_mux41_buf -from A3 -to X
+
+set_disable_timing 			cus_mux41 -from A0 -to X
+set_disable_timing 			cus_mux41 -from A1 -to X
+set_disable_timing 			cus_mux41 -from A2 -to X
+set_disable_timing 			cus_mux41 -from A3 -to X
+
+set_disable_timing 			cus_mux81_buf -from A0 -to X
+set_disable_timing 			cus_mux81_buf -from A1 -to X
+set_disable_timing 			cus_mux81_buf -from A2 -to X
+set_disable_timing 			cus_mux81_buf -from A3 -to X
+set_disable_timing 			cus_mux81_buf -from A4 -to X
+set_disable_timing 			cus_mux81_buf -from A5 -to X
+set_disable_timing 			cus_mux81_buf -from A6 -to X
+set_disable_timing 			cus_mux81_buf -from A7 -to X
+
+set_disable_timing 			cus_mux81 -from A0 -to X
+set_disable_timing 			cus_mux81 -from A1 -to X
+set_disable_timing 			cus_mux81 -from A2 -to X
+set_disable_timing 			cus_mux81 -from A3 -to X
+set_disable_timing 			cus_mux81 -from A4 -to X
+set_disable_timing 			cus_mux81 -from A5 -to X
+set_disable_timing 			cus_mux81 -from A6 -to X
+set_disable_timing 			cus_mux81 -from A7 -to X
+
+
+
+
+
+# Input path
+set All_input [remove_from_collection [all_inputs] [get_ports $clock_name]]
+set_input_delay -max 			5 -clock $clock_name $All_input
+set_input_delay -min 			5 -clock $clock_name $All_input
+
+# Output path
+set_output_delay -max 			1 -clock $clock_name [all_outputs]
+set_output_delay -min 			1 -clock $clock_name [all_outputs]
+set_fix_multiple_port_nets -all -buffer_constants [get_designs *]
+set compile_advanced_fix_multiple_port_nets true
+set_app_var verilogout_no_tri 		true
